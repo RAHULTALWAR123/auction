@@ -1,0 +1,7 @@
+{
+    "watch": ["server.js", "routes/**/*.js"], 
+    "ignore": ["*.test.js", "public/*", "*.log"],
+    "ext": "js,json",
+    "delay": 500
+  }
+  
