@@ -21,6 +21,7 @@ const playerSchema = new mongoose.Schema({
   basePrice: { type: Number, required: true },
   bidPrice: { type: Number, default: 0 },
   isSold: { type: Boolean, default: false },
+  isUnsold: { type: Boolean, default: false },
   soldPrice: { type: Number, default: 0 },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   lastBidder: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },

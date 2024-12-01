@@ -25,6 +25,22 @@ const TeamCard = ({user}) => {
       setLogo("/RR.webp")
       setbg("gradient-to-b from-pink-500 to-blue-500")
     }
+    else if(user.username === "DC"){
+      setLogo("/DC.webp")
+      setbg("gradient-to-b from-blue-800 to-red-500")
+    }
+    else if(user.username === "KKR"){
+      setLogo("/KKR.webp")
+      setbg("gradient-to-b from-purple-800 to-yellow-600")
+    }
+    else if(user.username === "SRH"){
+      setLogo("/SRH.webp")
+      setbg("gradient-to-b from-orange-700 to-red-500")
+    }
+    else if(user.username === "PBKS"){
+      setLogo("/PBKS.webp")
+      setbg("gradient-to-b from-red-700 to-gray-400")
+    }
   },[user.username])
 
     return (
@@ -45,15 +61,15 @@ const TeamCard = ({user}) => {
         </div>
         <h1 className="text-3xl font-extrabold mt-2 text-gray-800">{user.username}</h1>
         <div className="mt-6 text-left space-y-3">
-          <p className="font-semibold text-lg text-gray-800">
-            <span className="text-blue-700">Team Players: </span>{user.team.length}
+          <p className="font-semibold text-lg text-gray-300">
+            <span className="text-black">Squad: </span>{user.team.length}
           </p>
-          <p className="font-semibold text-lg text-gray-800">
-            <span className="text-blue-700">Team Purse:</span> ₹ {user.budget} Cr
+          <p className="font-semibold text-lg text-gray-300">
+            <span className="text-black">Purse: </span> ₹ {user.budget} Cr
           </p>
         </div>
         <Link to={`/team/${user._id}`}>
-        <button className="mt-6 px-4 py-2 bg-blue-700 text-white font-medium rounded-md hover:bg-blue-600 transition duration-200">
+        <button className="mt-6 px-4 py-2 bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium rounded-md hover:bg-blue-600 transition duration-200">
           View Details
         </button>
         </Link>

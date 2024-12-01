@@ -76,8 +76,34 @@ export const getSkippedUsers = async (req, res) => {
             return res.status(404).json({ message: "Player not found" });
         }
 
+        
+        const users = await User.find({});
+        
+        if(users.length === player.isSkippedBy.length){
+            player.isUnsold = true;
+            await player.save();
+        }
+        
         res.json(player.isSkippedBy);
+
     } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const getOwnerDetails = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const player = await Player.findById(id).populate("owner", "username");
+
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+
+        res.json(player.owner);
+    }catch(error){
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
@@ -97,6 +123,26 @@ export const getTeamPlayers = async (req, res) => {
         res.json(user.team);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const getPlayerByName = async (req, res) => {
+    try{
+        const {name} = req.params;
+
+        // console.log("Player name:", name);
+        const player = await Player.findOne({name});
+
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+
+        res.status(200).json(player);
+
+    } catch (error) {
+        console.log(error);
+        console.log("Player name:", name);
         res.status(500).json({ message: "Internal server error" });
     }
 }

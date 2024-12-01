@@ -34,6 +34,18 @@ const TeamSkip = ({ user1 }) => {
     } else if (user1.username === "RR") {
       setLogo("/RR.webp");
     }
+    else if (user1.username === "DC") {
+      setLogo("/DC.webp");
+    }
+    else if (user1.username === "KKR") {
+      setLogo("/KKR.webp");
+    }
+    else if (user1.username === "SRH") {
+      setLogo("/SRH.webp");
+    }
+    else if (user1.username === "PBKS") {
+      setLogo("/PBKS.webp");
+    }
   }, [user1.username]);
 
   // useEffect(() => {
@@ -41,14 +53,14 @@ const TeamSkip = ({ user1 }) => {
   // },[ getSkippedUser, playerId ]);
 
   return (
-    <div className={`border border-gray-600 flex items-center gap-4 bg-gradient-to-r ${bg} p-2`}>
-      <img src={logo} alt={`${user1.username} logo`} className="h-10 w-10 rounded-full shadow-md" />
-      {user1.username}
-      <p className='relative left-28'>
-      Squad : {user1.team.length}
-      </p>
-    </div>
+<div className={`flex items-center gap-2 sm:gap-4 p-2 bg-gradient-to-r ${bg} rounded-md`}>
+  <img src={logo} alt={`${user1.username} logo`} className="h-8 w-8 sm:h-10 sm:w-10 rounded-full shadow-md" />
+  <div className="text-sm sm:text-base font-bold">{user1.username}</div>
+  <p className="ml-auto text-xs sm:text-sm">Squad: {user1.team.length}</p>
+</div>
+
   );
 };
 
 export default TeamSkip;
+

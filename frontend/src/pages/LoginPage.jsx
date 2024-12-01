@@ -33,7 +33,7 @@ const LoginPage = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
     >
-      <h2 className='mt-6 text-center text-3xl font-extrabold text-yellow-500'>Welcome back</h2>
+      <h2 className='mt-6 text-center text-3xl font-extrabold text-white'>Welcome back</h2>
     </motion.div>
 
     <motion.div
@@ -42,7 +42,7 @@ const LoginPage = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.2 }}
     >
-      <div className='bg-blue-800 py-8 px-4 shadow sm:rounded-lg sm:px-10'>
+      <div className='bg-gradient-to-l from-white to-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10'>
         <form onSubmit={handleSubmit} className='space-y-6'>
           <div>
             <label htmlFor='email' className='block text-sm font-medium text-gray-300'>
@@ -91,7 +91,7 @@ const LoginPage = () => {
           <button
             type='submit'
             className='w-full flex justify-center py-2 px-4 border border-transparent 
-            rounded-md shadow-sm text-sm font-medium text-black bg-yellow-500
+            rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-900 to-indigo-900
              focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out disabled:opacity-50'
             disabled={loading}
           >
@@ -111,7 +111,7 @@ const LoginPage = () => {
 
         <p className='mt-8 text-center text-sm text-white'>
           Not a member?{" "}
-          <Link to='/signup' className='font-medium text-yellow-500 hover:text-indigo-700'>
+          <Link to='/signup' className='font-medium text-blue-800 hover:text-indigo-700'>
             Sign up now 
           </Link>
         </p>
