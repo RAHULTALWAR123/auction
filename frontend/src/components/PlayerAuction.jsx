@@ -56,7 +56,7 @@ const PlayerAuction = () => {
     className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between sm:space-x-4 space-y-6 sm:space-y-0"
   >
     <div className="flex justify-center items-center w-full">
-    <div className="flex justify-center mt-12 sm:w-1/5 w-1/3">
+    <div className="flex justify-center mt-12 sm:w-1/5 w-2/3">
       <div className="flex justify-center items-center w-full py-5 text-3xl text-blue-700 font-extrabold bg-gradient-to-b from-black to-gray-900 rounded-2xl">
         ₹ {player?.basePrice} Cr
       </div>
