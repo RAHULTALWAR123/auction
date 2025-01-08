@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
-import { useState } from "react";
+// import { Searc } from "lucide-react";
+import { ImCross } from "react-icons/im";
+import { useEffect, useState } from "react";
 // import { useProductStore } from "../stores/useProductStore";
 // import ProductCard from "../components/ProductCard";
 import { usePlayerStore } from "../stores/usePlayerStore";
@@ -10,14 +11,39 @@ import SearchPlayer from "./SearchPlayer";
 const SearchPage = () => {
     const [input, setInput] = useState('');
     const [searched, setSearched] = useState(false);
-    const{fetchPlayerName, player} = usePlayerStore();
-    // const { fetchProductByName, products } = useProductStore();
+    const{fetchPlayerQuery, players} = usePlayerStore();
+    const[pop,setPop] = useState("");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        fetchPlayerName(input);
-        setInput('');
+
+    useEffect(() => {
+        if(input.trim().length > 0){
+            fetchPlayerQuery(input);
+            setPop("block");
+        }
+    },[fetchPlayerQuery, input]);
+
+
+    const handleSearch = async(query) => {
+    try{
+        await fetchPlayerQuery(query);
         setSearched(true);
+        setPop("none");
+    }
+    catch(error){
+            console.log(error);
+        }
+    }
+
+    const handleSuggestion = (playerName) => {
+        setInput(playerName);
+        handleSearch(playerName);
+        setPop("none");
+    }
+
+    const handleSubmit = () => {
+        // e.preventDefault();
+        handleSearch(input);
+        setInput('');
     }
 
     return (
@@ -38,10 +64,28 @@ const SearchPage = () => {
                         placeholder="Search..."
                         className="bg-transparent text-black placeholder-black outline-none w-full"
                     />
-                    <button type="submit" className='text-white bg-gradient-to-t from-blue-900 to-indigo-900 hover:bg-indigo-700 px-4 py-1 rounded-lg ml-2'>
-                        <Search size={22} />
+                    <button type="submit" className='text-white bg-gradient-to-t from-black to-blue-700 hover:bg-indigo-700 px-3 py-3 rounded-full ml-2'>
+                        <ImCross size={22} />
                     </button>
                 </form>
+
+                {/* Suggestion */}
+                {input.trim() && players.length > 0 && (
+                    <ul className='absolute top-80 bg-gradient-to-t from-black to-blue-700 rounded-2xl p-4 w-full max-w-lg z-10 shadow-lg overflow-y-auto'
+                    style={{ maxHeight: "200px", display: pop }}
+                    >
+                        {players.map((player) => (
+                            <li
+                                key={player._id}
+                                onClick={() => handleSuggestion(player.name)}
+                                className="px-4 py-2 hover:bg-gray-900 rounded-2xl cursor-pointer font-bold"
+                            >
+                                {player.name}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
             </div>
 
             {/* Product Grid */}
@@ -53,7 +97,7 @@ const SearchPage = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                 >
                     {/* No products found */}
-                    {searched && !player && (
+                    {searched && players.length === 0 && (
                         <h2 className="text-3xl font-semibold text-gray-300 text-center col-span-full">
                             No player found
                         </h2>
@@ -61,8 +105,9 @@ const SearchPage = () => {
 
                     {/* Display searched products */}
                     <div>
-                    {searched && player && 
+                    {searched && players.map((player) =>(
                         <SearchPlayer key={player._id} player={player} />
+                    )) 
                     }
                     </div>
                 </motion.div>

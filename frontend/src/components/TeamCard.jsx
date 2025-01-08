@@ -67,6 +67,9 @@ const TeamCard = ({user}) => {
           <p className="font-semibold text-lg text-gray-300">
             <span className="text-black">Purse: </span> ₹ {user.budget} Cr
           </p>
+          <p className="font-semibold text-lg text-gray-300">
+            <span className="text-black">RTM left : </span> {user.RTM}
+          </p>
         </div>
         <Link to={`/team/${user._id}`}>
         <button className="mt-6 px-4 py-2 bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium rounded-md hover:bg-blue-600 transition duration-200">

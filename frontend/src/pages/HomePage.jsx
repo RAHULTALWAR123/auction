@@ -6,6 +6,8 @@ import { RiAuctionFill } from 'react-icons/ri'
 import { Link } from "react-router-dom"
 import { useUserStore } from "../stores/useUserStore"
 import { useEffect } from "react"
+import Performers from "../components/Performers"
+import Top3 from "../components/Top3"
 
 const HomePage = () => {
 
@@ -28,6 +30,17 @@ const HomePage = () => {
 
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 px-5 sm:px-10 lg:px-40 mt-10 justify-items-center lg:justify-items-stretch'>
   {users.map((user) => (<TeamCard key={user._id} user={user} />))}
+</div>
+
+<div>
+<h1 className='mt-10 sm:mt-16 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center lg:text-left px-5 lg:ml-40 mb-5'>
+        MVP&apos;S OF IPL
+      </h1>  
+  <Performers/>
+</div>
+
+<div>
+  <Top3/>
 </div>
 
       <h1 className='mt-10 sm:mt-16 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center lg:text-left px-5 lg:ml-40'>

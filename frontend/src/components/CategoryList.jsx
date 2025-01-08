@@ -70,7 +70,7 @@ const CategoryList = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-left text-2xl sm:text-3xl font-bold mt-10 mb-10 text-white">{category} Players</h2>
+        <h2 className="text-left text-2xl sm:text-3xl font-bold mt-10 mb-10 text-white">{category}</h2>
 
         <div className='flex flex-col items-center gap-4'>
           {players.length > 0 ? (

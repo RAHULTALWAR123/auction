@@ -5,10 +5,15 @@ import socket from '../socket/socket'
 
 export const useUserStore = create((set, get) => ({
     user: null,
+    team : [],
     loading: false,
     checkingAuth: true,
     users: [],
     skippedUsers: [],
+    rtmNotifications: [],
+
+
+    clearNotifications: () => set({ rtmNotifications: [] }),
 
 
     // Initialize socket listeners for user-related events
@@ -35,6 +40,7 @@ export const useUserStore = create((set, get) => ({
     // Clean up socket listeners
     cleanupUserSocketListeners: () => {
         socket.off("player-skipped");
+        socket.off("rtm-updated");
     },
 
     signup: async ({ username, email, password, confirmPassword }) => {
@@ -163,6 +169,46 @@ getSkippedUser: async (id) => {
     }
 },
 
+finalizeTeam : async () =>{
+    set({ loading: true });
+    try{
+        await axios.patch("/auth/final");
+        set({ loading: false });
+        return toast.success("Team finalized successfully");
+    }catch(error){
+        set({ loading: false });
+        return toast.error(error.response.data.message || "An error occurred");
+    }
+},
+
+
+rtm : async (id) => {
+    set({ loading: true });
+    try{
+        const res = await axios.post(`/auction/rtm/${id}`);
+
+        socket.emit("rtm-used",{
+            playerId: id,
+            userId: get().user?.username,
+            updatedSkippedUsers: res.data.notSkippedUsers
+        })
+
+        set((state) => ({
+            ...state,
+            // player: res.data.player,
+            skippedUsers: res.data.notSkippedUsers,
+            loading: false
+        }));
+        console.log(res.data);
+        return toast.success(`RTM excercised successfully`);
+    }
+    catch(error){
+        set ({ loading: false });
+        return toast.error(error.response.data.message || "An error occurred");
+    }
+},
+     
+
 initializeUserSocketListeners: () => {
     socket.on("player-skipped", async ({ playerId, userId }) => {
         console.log("Socket skip event received:", { playerId, userId });
@@ -185,5 +231,23 @@ initializeUserSocketListeners: () => {
             };
         });
     });
+
+    socket.on("rtm-updated",({ playerId, userId, updatedSkippedUsers }) => {
+        console.log("Socket RTM event received:", { playerId, userId, updatedSkippedUsers });
+
+        set((state) => ({
+            ...state,
+            skippedUsers: updatedSkippedUsers
+        }));
+    })
+
+    socket.on("rtm-notifications",({message,timestamp}) => {
+        console.log("Socket RTM notification received:", { message, timestamp });
+
+        set((state) => ({
+            ...state,
+            rtmNotifications: [{ message, timestamp }]
+        }))
+    })
 },
 }))

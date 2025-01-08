@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { House, UserPlus, LogIn, LogOut, Menu, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 // import { useUserStore } from "../stores/useUserStore";
@@ -12,15 +12,34 @@ import {FaUserPlus} from 'react-icons/fa';
 const Navbar = () => {
     const { user,logout } = useUserStore();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [logo, setLogo] = useState("none");
     // const user = false;
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    useEffect(() => {
+        if (user) {
+            if (user?.username === "RCB") {
+                setLogo("/RCB.webp");
+            } else if (user?.username === "MI") {
+                setLogo("/MI.webp");
+            } else if (user?.username === "CSK") {
+                setLogo("/CSK.webp");
+            } else if (user?.username === "RR") {
+                setLogo("/RR.webp");
+            } else if (user?.username === "DC") {
+                setLogo("/DC.webp");
+            } else if (user?.username === "KKR") {
+                setLogo("/KKR.webp");
+            }
+        }
+    }, [user]);
+
     return (
         <header className='fixed top-0 left-0 w-full bg-transparent bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-indigo-800 lg:border-none'>
-            <div className='container mx-auto px-4 py-3 lg:flex lg:justify-between lg:items-center'>
+            <div className='mx-auto px-4 py-3 lg:flex lg:justify-between lg:items-center'>
                 <div className='flex justify-between items-center'>
                     <div className='text-2xl font-bold text-indigo-600 items-center space-x-2 flex'>
                         {/* <FaTrophy size={32} className='text-yellow-400'/> */}
@@ -41,31 +60,6 @@ const Navbar = () => {
 						<Link to='/search' className='flex text-gray-300 hover:text-indigo-600 transition duration-300 ease-in-out' onClick={toggleSidebar}><Search />
 						<span className='lg:hidden sm:inline ml-2'>Search Player</span>
 						</Link>
-                        
-                        {/* {user && (
-                            <Link to={"/cart"} className='relative group text-gray-300 hover:text-indigo-600 transition duration-300 ease-in-out' onClick={toggleSidebar}>
-                                <ShoppingCart className='inline-block mr-1 group-hover:text-indigo-600' size={22} />
-								<span className='lg:hidden sm:inline ml-2'>My Cart</span>
-                                {cart.length > 0 && (
-                                    <span className='absolute -top-2 -left-2 bg-indigo-600 text-white rounded-full px-2 py-0.5 text-xs group-hover:bg-indigo-600 transition duration-300 ease-in-out'>
-                                        {cart.length}
-                                    </span>
-                                )}
-                            </Link>
-                        )} */}
-
-                        {/* {user && (
-                            <Link to={`/orders/${user._id}`} className='relative group text-gray-300 hover:text-indigo-600 transition duration-300 ease-in-out' onClick={toggleSidebar}>
-                                <User className='inline-block mr-1 group-hover:text-indigo-600' size={22} />
-								<span className='lg:hidden sm:inline ml-2'>My Orders</span>
-                            </Link>
-                        )}
-                        {isAdmin && (
-                            <Link to={'/secret-dashboard'} className='bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-md font-medium transition duration-300 ease-in-out flex items-center' onClick={toggleSidebar}>
-                                <Lock className='inline-block mr-1' size={18} />
-                                <span className='sm:inline'>Dashboard</span>
-                            </Link>
-                        )} */}
 
                         {user ? (
                             <>
@@ -75,15 +69,30 @@ const Navbar = () => {
                                 <span className='lg:hidden sm:inline ml-2'>Add Player</span>
                             </button>
                             </Link>
-                            <button className='bg-gradient-to-r from-white to-gray-800 hover:bg-yellow-400 text-black py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out' onClick={() => { logout(); toggleSidebar(); }}>
-                                <LogOut size={18} />
-                                <span className='sm:inline ml-2'>Log Out</span>
+
+                            <Link to={`/manage/${user?._id}`}>
+                            <button className=' text-black py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out' onClick={() => { toggleSidebar(); }}>
+                            <img
+                            src={logo}
+                            alt="Team Logo"
+                            className="h-12 w-12 rounded-full shadow-md"
+          />
+                            {/* <span className='sm:inline ml-2'>Manage Team</span> */}
                             </button>
+                            </Link>
+
                             <Link to={"/auction"}>
                                 <button className='bg-gradient-to-r from-gray-800 to-white  text-black py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out'>
                                     <RiTeamFill size={18} />
                                         <span className='sm:inline ml-2'>Auction Summary</span>
                                 </button>
+                            </Link>
+
+                            <Link to={"/login"}>
+                            <button className='bg-gradient-to-l from-gray-800 to-white  text-black py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out' onClick={logout}>
+                                <LogOut size={22} />
+                                {/* <span className='sm:inline ml-2'>Logout</span> */}
+                            </button>
                             </Link>
                             </>
                         ) : (

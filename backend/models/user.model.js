@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   logo: { type: String },
   budget: { type: Number, default: 80 },
+  RTM:{type: Number, default: 3},
+  retainCount: { type: Number, default: 3 },
   team: [{ 
     type: mongoose.Schema.Types.ObjectId,
     ref: "Player", 
@@ -17,6 +19,7 @@ const userSchema = new mongoose.Schema({
       status: { type: Boolean, default: false },
     },
   ],
+  hasFinalized: { type: Boolean, default: false },
 },{ timestamps: true });
 
 const User = mongoose.model("User", userSchema);

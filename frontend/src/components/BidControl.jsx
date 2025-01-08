@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { usePlayerStore } from "../stores/usePlayerStore";
 import { useUserStore } from "../stores/useUserStore";
 import { motion } from "framer-motion";
+import { Loader } from "lucide-react";
 // import socket from "../socket/socket";
 
 const BidControl = () => {
@@ -15,7 +16,7 @@ const BidControl = () => {
     bidPlayer,
     playerSold,
     initializeSocketListeners,
-    cleanupSocketListeners
+    cleanupSocketListeners,loading
   } = usePlayerStore();
   const {
     user, SkipCurrentPlayer,
@@ -76,8 +77,12 @@ const BidControl = () => {
       transition={{ duration: 0.5 }}
     >
       <div className='flex flex-col justify-center items-center'>
-        <img src={player?.img} alt="" className='h-52 w-52' />
-        <p className='font-bold text-2xl rounded-xl px-7 pb-2 pt-2 mt-2 bg-gradient-to-b from-black to-gray-900 text-blue-700'>
+        {!loading ? <img src={player?.img} alt="" className='sm:h-52 sm:w-52 h-40 w-40' /> : 
+        <>
+          <Loader className='mr-2 h-10 w-10 animate-spin' aria-hidden='true' />
+        </>}
+
+        <p className='font-bold text-2xl rounded-xl sm:px-7 px-4 pb-2 pt-2 mt-2 bg-gradient-to-b from-black to-gray-900 text-blue-700'>
           {player?.name}
         </p>
 
@@ -85,16 +90,16 @@ const BidControl = () => {
           <table className="border-collapse border border-gray-600">
             <thead>
               <tr>
-                <th className="border border-gray-600 py-1 px-3 bg-gradient-to-t from-gray-600 to-gray-800">Role</th>
-                <th className="border border-gray-600 py-1 px-3 bg-gradient-to-t from-gray-600 to-gray-800">Style</th>
-                <th className="border border-gray-600 py-1 px-3 bg-gradient-to-t from-gray-600 to-gray-800">Base Price</th>
+                <th className="border border-gray-600 py-1 sm:px-3 px-2 bg-gradient-to-t from-gray-600 to-gray-800">Role</th>
+                <th className="border border-gray-600 py-1 sm:px-3 px-2 bg-gradient-to-t from-gray-600 to-gray-800">Style</th>
+                <th className="border border-gray-600 py-1 sm:px-3 px-2 bg-gradient-to-t from-gray-600 to-gray-800">Base Price</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="border border-gray-600 py-1 px-3 bg-gradient-to-t from-gray-300 to-gray-400 text-black">{player?.role}</td>
-                <td className="border border-gray-600 py-1 px-3 bg-gradient-to-t from-gray-300 to-gray-400 text-black">{player?.style}</td>
-                <td className="border border-gray-600 py-1 px-3 bg-gradient-to-t from-gray-300 to-gray-400 text-black">₹ 2 Cr</td>
+                <td className="border border-gray-600 py-1 sm:px-3 px-2 bg-gradient-to-t from-gray-300 to-gray-400 text-black">{player?.role}</td>
+                <td className="border border-gray-600 py-1 sm:px-3 px-2 bg-gradient-to-t from-gray-300 to-gray-400 text-black">{player?.style}</td>
+                <td className="border border-gray-600 py-1 sm:px-3 px-2 bg-gradient-to-t from-gray-300 to-gray-400 text-black">₹ 2 Cr</td>
               </tr>
             </tbody>
           </table>
@@ -121,9 +126,9 @@ const BidControl = () => {
           <button
             onClick={handleSold}
             disabled={hasUserSkipped}
-            className={`sm:px-48 px-40 py-3 border border-gray-600 rounded-2xl text-xl text-black font-bold ${hasUserSkipped
+            className={`sm:px-48 px-40 py-3  rounded-2xl text-2xl font-bold ${hasUserSkipped
               ? "bg-gradient-to-t from-black to-gray-800 text-white cursor-not-allowed"
-              : "bg-gradient-to-b from-white to-gray-800"
+              : "bg-gradient-to-t from-black to-gray-900 text-blue-700"
               }`}
           >
             Buy

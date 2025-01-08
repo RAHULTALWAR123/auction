@@ -15,10 +15,10 @@ const CategoryPlayer2 = ({ player }) => {
             <button
               className={`w-30 sm:w-56 px-4 sm:px-7 py-2 sm:py-4 text-xs sm:text-base sm:font-bold rounded-lg ${
                 player?.isSold
-                  ? "bg-gradient-to-t from-black to-gray-800 text-white cursor-not-allowed"
+                  ? "bg-gradient-to-t from-black to-gray-800 text-blue-700  font-extrabold cursor-not-allowed"
                   : player?.isUnsold
                   ? "bg-gradient-to-t from-red-500 to-red-800 text-white cursor-not-allowed"
-                  : "bg-gradient-to-t from-purple-600 to-indigo-900 text-white"
+                  : "bg-gradient-to-t from-blue-500 to-indigo-600 text-white"
               }`}
               disabled={player?.isSold || player?.isUnsold}
             >

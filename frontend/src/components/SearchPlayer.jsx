@@ -34,7 +34,7 @@ const SearchPlayer = ({player}) => {
             setBg("gradient-to-b from-blue-800 to-pink-500");
           }
           else{
-            setBg("gradient-to-t from-white to-gray-800");
+            setBg("gradient-to-b from-white to-gray-800");
           }
           
     },[getOwner,player?._id,owner?.username])

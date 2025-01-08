@@ -7,13 +7,23 @@ export const usePlayerStore = create((set, get) => ({
     player: null,
     owner: null,
     loading: false,
+    teamLoading: false,
+    loadingSpinner: false,
+    topLoading: false,
+    submitLoading: false,
+    bidloading: false,
     players: [],
     marqueePlayers: [],
     batsmanPlayers: [],
     bowlerPlayers: [],
     allrounderPlayers: [],
+    soldNotifications: [],
     bid: null,
-
+    assist: null,
+    lastBidder: null,
+    topPlayers: [],
+    
+    clearNotifications: () => set({ soldNotifications: [] }),
 
     initializeSocketListeners: (playerId) => {
         socket.emit("join-auction", playerId);
@@ -58,9 +68,19 @@ export const usePlayerStore = create((set, get) => ({
                     ...currentState.player,
                     basePrice: update.currentPrice,
                     lastBidder: update.lastBidderId
-                }
+                },
+                lastBidder: update.lastBidderName 
             }));
         });
+
+        socket.on("bid-notifications", ({ bidderName, timestamp}) => {
+            console.log("Socket bid notification received:", { bidderName, timestamp });
+
+            set((state) => ({
+                ...state,
+                lastBidder: bidderName,
+            }))
+        })
 
         socket.on("player-sold", (soldData) => {
             set((currentState) => ({
@@ -73,6 +93,16 @@ export const usePlayerStore = create((set, get) => ({
                 }
             }));
         });
+
+        socket.on("sold-notifications", ({ message, timestamp }) => {
+            console.log("Socket sold notification received:", { message, timestamp });
+
+            set((state) => ({
+                ...state,
+                soldNotifications: [{ message, timestamp }]
+            }))
+        })
+
     },
 
     // Clean up socket listeners
@@ -80,6 +110,7 @@ export const usePlayerStore = create((set, get) => ({
         socket.off("auction-state");
         socket.off("bid-updated");
         socket.off("player-sold");
+
     },
 
 
@@ -125,6 +156,32 @@ export const usePlayerStore = create((set, get) => ({
         }
     },
 
+    fetchPlayerQuery: async (query) => {
+        set({ loading: true });
+        try {
+            const res = await axios.get(`/players/re-search?query=${query}`);
+            set({ players: res.data, loading: false });
+            console.log(res.data);
+        }
+        catch(error){
+            set({ loading: false });
+            return toast.error(error.response.data.message || 'An error occurred');
+        }
+    },
+
+    fetchLastBid: async (id) => {
+        set({ loading: true });
+        try{
+            const res = await axios.get(`/players/lastbid/${id}`);
+            set({ lastBidder: res.data.lastbid, loading: false });
+            console.log(res.data.lastbid);
+        }
+        catch(error){
+            set({ loading: false });
+            return toast.error(error.response.data.message || 'An error occurred');
+        }
+    },
+
     addAPlayer : async(playerData) => {
         set({ loading: true });
         try{
@@ -143,7 +200,7 @@ export const usePlayerStore = create((set, get) => ({
 
 
     bidPlayer: async (id) => {
-        set({ loading: true });
+        set({ bidloading: true });
         try {
             const res = await axios.patch(`/auction/bid/${id}`);
             const updatedPlayer = res.data.player;
@@ -158,12 +215,13 @@ export const usePlayerStore = create((set, get) => ({
             set((state) => ({
                 ...state,
                 player: updatedPlayer,
-                loading: false
+                lastBidder: get().lastBidder?.username,
+                bidloading: false
             }));
 
             return toast.success('Bid placed successfully');
         } catch (error) {
-            set({ loading: false });
+            set({ bidloading: false });
             return toast.error(error.response?.data?.message || 'An error occurred');
         }
     },
@@ -185,9 +243,9 @@ export const usePlayerStore = create((set, get) => ({
 
 
             socket.emit("player-sold", {
-                playerId: id,
-                buyerId: res.data.soldTo,
-                finalPrice: res.data.basePrice
+                playerId: res.data.player.name,
+                buyerId: res.data.currentUser.name,
+                finalPrice: res.data.player.basePrice
             });
 
             set((state) => ({
@@ -207,14 +265,15 @@ export const usePlayerStore = create((set, get) => ({
 
 
     getTeam: async (id) => {
-        set({ loading: true });
+        set({ teamLoading: true });
         try {
             const res = await axios.get(`/players/team/${id}`);
-            set({ players: res.data, loading: false });
+            set({ players: res.data, teamLoading: false });
             console.log(res.data);
         } catch (error) {
-            set({ loading: false });
-            toast.error(error.response.data.message || 'An error occurred');
+            set({ teamLoading: false });
+            console.log(error);
+            // toast.error(error.response.data.message || 'An error occurred');
         }
     },
 
@@ -226,7 +285,73 @@ export const usePlayerStore = create((set, get) => ({
             console.log(res.data);
         } catch (error) {
             set({ loading: false });
+            console.log(error);
+            // toast.error(error.response.data.message || 'An error occurred');
+        }
+    },
+
+    getTop : async() => {
+        set({ topLoading: true });
+        try{
+            const res = await axios.get("/players/top-3")
+            set({ topPlayers: res.data, topLoading: false });
+            console.log(res.data);
+        }catch(error){
+            set({ topLoading: false });
             toast.error(error.response.data.message || 'An error occurred');
         }
-    }
-}));
+    },
+
+    getAssist : async(id) => {
+        set({ loadingSpinner: true });
+        try{
+            const res = await axios.post(`/auction/ai-suggest/${id}`);
+            set((state) => ({
+                ...state,
+                assist: res.data.suggestions,
+                loadingSpinner: false
+            }));
+            console.log(res.data);
+        }
+        catch(error){
+            set({ loadingSpinner: false });
+            toast.error(error.response.data.message || 'An error occurred');
+        }
+    },
+
+    retain : async (id) => {
+        set({ loading: true });
+        try{
+            const res = await axios.patch(`/players/retain/${id}`);
+            set((state) => ({
+                ...state,
+                player: res.data,
+                loading: false
+            }));
+            toast.success(`${res.data.player.name} retained successfully`);
+            console.log(res.data);
+        }
+        catch(error){
+            set({ loading: false });
+            toast.error(error.response.data.message || 'An error occurred');
+        }
+    },
+
+    submit : async () => {
+        set ({ submitLoading: true });
+        try {
+            const res = await axios.patch("/auth/submit-retention");
+            set((state) => ({
+                ...state,
+                submitLoading: false,
+                players: res.data.retainedPlayers
+            }))
+            return toast.success("Retentions submitted successfully");
+        } catch (error) {
+            set ({ submitLoading: false });
+            // console.log(error);
+            return toast.error(error.response.data.message || "An error occurred");
+        }
+    },
+
+}))

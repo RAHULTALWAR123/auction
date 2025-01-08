@@ -105,6 +105,60 @@ export const getOwnerDetails = async (req, res) => {
         res.json(player.owner);
     }catch(error){
         console.log(error);
+        // res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const getPlayedFor = async(req,res) => {
+    try {
+        const {id} = req.params;
+
+        const player = await Player.findById(id).populate("hasPlayedFor", "username");
+
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+
+        res.json(player.hasPlayedFor);
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const getlastbidder = async(req,res) => {
+    try{
+        const {id} = req.params;
+
+        const player = await Player.findById(id).populate("lastBidder", "username");
+
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+
+        res.json({lastbid:player.lastBidder});
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const getSearchPlayer = async (req, res) => {
+    try {
+        const {query} = req.query;
+
+        const players = await Player.find({name: {$regex: query, $options: "i"}}).select("name img role style basePrice category owner isSold");
+
+        if (!players) {
+            return res.status(404).json({ message: "Players not found" });
+        }
+
+        res.status(200).json(players);
+    }
+    catch (error) {
+        console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -123,7 +177,7 @@ export const getTeamPlayers = async (req, res) => {
         res.json(user.team);
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+        // res.status(500).json({ message: "Internal server error" });
     }
 }
 
@@ -143,6 +197,62 @@ export const getPlayerByName = async (req, res) => {
     } catch (error) {
         console.log(error);
         console.log("Player name:", name);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const retainPlayer = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const player = await Player.findById(id);
+
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+
+        const currentUser = await User.findById(req.user._id);
+
+        if (!currentUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if(!currentUser.hasFinalized){
+            return res.status(400).json({ message: "You need to finalize your team first" });
+        }
+
+        if(player.owner?.toString() !== req.user._id.toString()) {
+            return res.status(400).json({ message: "You cannot retain this player" });
+        }
+        
+        if(currentUser.retainCount === 0){
+            return res.status(400).json({ message: "max limit reached" });
+        }
+        currentUser.retainCount -= 1;
+        player.isRetained = true;
+        await currentUser.save();
+        await player.save();
+
+        res.status(200).json({ message: "Player retained successfully", player: {name: player.name, img: player.img}  });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+
+export const topBuys = async(req,res) => {
+    try {
+        const players = await Player.find({isSold: true,isRetained: false}).sort({basePrice: -1}).limit(3).select("name img role style basePrice category owner isSold");
+
+        if (!players) {
+            return res.status(404).json({ message: "Players not found" });
+        }
+
+        res.status(200).json(players);
+    } catch (error) {
+        console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
 }

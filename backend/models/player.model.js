@@ -18,7 +18,9 @@ const playerSchema = new mongoose.Schema({
               required: true 
   },
   isSkippedBy:[{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  hasPlayedFor:[{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   basePrice: { type: Number, required: true },
+  isRetained: { type: Boolean, default: false },
   bidPrice: { type: Number, default: 0 },
   isSold: { type: Boolean, default: false },
   isUnsold: { type: Boolean, default: false },

@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllUsers, getProfile, login, logout, signup, skipPlayer } from "../controllers/auth.controller.js";
+import { getAllUsers, getProfile, login, logout, signup, skipPlayer, submitRetention, toggleFinish } from "../controllers/auth.controller.js";
 import protectRoute from "../middleware/auth.js";
 const router = express.Router();
 
@@ -9,5 +9,7 @@ router.post("/signup",signup);
 router.post("/login",login); 
 router.post("/logout",logout);
 router.patch("/skip/:id",protectRoute,skipPlayer);
+router.patch("/final",protectRoute,toggleFinish);
+router.patch("/submit-retention",protectRoute,submitRetention);
 
 export default router;

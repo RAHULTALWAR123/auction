@@ -35,14 +35,14 @@ const CategoryPlayer = ({ player, index, players }) => {
         <div className="flex justify-center items-center">
           <Link to={`/auction/${player._id}`}>
             <button
-              className={`w-30 sm:w-56 px-4 sm:px-7 py-2 sm:py-4 text-xs sm:text-base sm:font-bold rounded-lg ${
+              className={`w-30 sm:w-56 px-4 sm:px-7 py-2 sm:py-4 text-xs sm:text-base sm:font-extrabold rounded-lg ${
                 player?.isSold
-                  ? "bg-gradient-to-b from-gray-900 to-black text-white cursor-not-allowed"
+                  ? "bg-gradient-to-b from-gray-900 to-black text-blue-700 font-extrabold cursor-not-allowed"
                   : player?.isUnsold
                   ? "bg-gradient-to-t from-red-500 to-red-800 text-black cursor-not-allowed"
                   : !isSequentiallyAvailable
-                  ? "bg-gradient-to-t from-blue-400 to-indigo-500 text-black cursor-not-allowed"
-                  : "bg-gradient-to-b from-purple-600 to-indigo-900 text-white"
+                  ? "bg-gradient-to-t from-blue-500 to-indigo-600 text-white cursor-not-allowed"
+                  : "bg-gradient-to-t from-green-500 to-emerald-500 text-black font-bold"
               }`}
               disabled={player?.isSold || !isSequentiallyAvailable || player?.isUnsold}
             >

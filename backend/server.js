@@ -9,6 +9,7 @@ import { connectDB } from "./lib/db.js";
 import { v2 as cloudinary } from "cloudinary";
 import cookieParser from "cookie-parser";
 import path from "path";
+import User from "./models/user.model.js";
 
 dotenv.config();
 
@@ -45,10 +46,14 @@ io.on("connection", (socket) => {
 
 
     socket.on("bid-update", async ({ playerId, newPrice, bidderId }) => {
+        const bidder = await User.findById(bidderId);
+        const bidderName = bidder.username;
+
         const auctionState = {
             playerId,
             currentPrice: newPrice,
             lastBidderId: bidderId,
+            lastBidderName: bidderName,
             timestamp: Date.now()
         };
 
@@ -56,16 +61,27 @@ io.on("connection", (socket) => {
 
 
         io.to(`auction-${playerId}`).emit("bid-updated", auctionState);
+
+        io.emit("bid-notifications",{
+            bidderName,
+            timestamp: Date.now()
+        })
     });
 
 
     socket.on("player-sold", ({ playerId, buyerId, finalPrice }) => {
+
         io.to(`auction-${playerId}`).emit("player-sold", {
             playerId,
             buyerId,
             finalPrice
         });
         activeAuctions.delete(playerId);
+
+        io.emit("sold-notifications",{
+            message: `${playerId} sold for ₹${finalPrice} Cr to ${buyerId}`,
+            timestamp: Date.now()
+        })
     });
 
     socket.on("player-skipped", ({ playerId, userId }) => {
@@ -77,6 +93,25 @@ io.on("connection", (socket) => {
             timestamp: Date.now()
         });
     });
+
+    socket.on("rtm-used", async({ playerId, userId , updatedSkippedUsers }) => {
+        console.log(`RTM used by user ${userId} for player ${playerId}`);
+
+        const bidder = await User.find({username: userId});
+        const bidderName = bidder.username;
+
+        io.emit("rtm-updated",{
+            playerId,
+            userId,
+            updatedSkippedUsers,
+        })
+
+        io.emit("rtm-notifications",{
+            message: `RTM excercised by ${userId}`,
+            timestamp: Date.now()
+        })
+    })
+
 
     socket.on("disconnect", () => {
         console.log("A user disconnected", socket.id);
@@ -111,4 +146,4 @@ if(process.env.NODE_ENV === "production") {
 server.listen(PORT, () => {
     console.log("Server is running on http://localhost:" + PORT);
     connectDB();
-});
+}); 

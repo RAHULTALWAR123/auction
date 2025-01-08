@@ -15,6 +15,7 @@ import CategoryList from "./components/CategoryList"
 import AuctionGuide from "./components/AuctionGuide"
 import SearchUser from "./components/SearchUser"
 import AddPlayer from "./components/AddPlayer"
+import ManageTeam from "./components/ManageTeam"
 // import {io} from 'socket.io-client'
 
 
@@ -51,10 +52,12 @@ function App() {
         <Route path="/auction" element={user?<PlayerList/>:<LoginPage/>}/>
         <Route path="/sold/:pid" element={user?<SoldPage/>:<LoginPage/>}/>
         <Route path="/team/:id" element={user?<Team/>:<LoginPage/>}/>
+        <Route path="/manage/:id" element={user?<ManageTeam/>:<LoginPage/>}/>
         <Route path="/category/:category" element={user?<CategoryList/>:<LoginPage/>}/>
         <Route path="/auction-intro" element={user?<AuctionGuide/>:<LoginPage/>}/>
         <Route path="/search" element={user?<SearchUser/>:<LoginPage/>}/>
         <Route path="/add-player" element={user?<AddPlayer/>:<LoginPage/>}/>
+
       </Routes>
       </div>
       <Toaster/>
