@@ -98,7 +98,7 @@ const Performers = () => {
                         <h2 className="font-extrabold sm:text-3xl text-xl text-black">{slide.title}</h2>
                         <h2 className="font-extrabold sm:text-8xl text-5xl">{slide.subtitle}</h2>
                         <h1 className={`font-extrabold sm:text-5xl text-3xl mt-5 ${slide.color}`}>{slide.description}</h1>
-                        <div className="flex sm:gap-5 gap-2  mt-5 border border-white rounded-xl sm:p-5 p-3 sm:w-2/3 w-full">
+                        <div className="flex sm:gap-5 gap-2  mt-5 border border-white rounded-xl sm:p-5 p-3 sm:w-2/3 w-11/12">
                             <div className="flex-col">
                                 <p className="font-bold sm:text-md text-xs">M</p>
                                 <p className={`font-extrabold sm:text-lg text-xs ${slide.color}`}>{slide.m}</p>
